@@ -12,7 +12,7 @@ class ChatGPT3TelegramBot:
     def __init__(self, config: dict, openai: OpenAIHelper):
         self.config = config                # :param config: Словник з конфігурацією бота
         self.openai = openai                # :param openai: OpenAIHelper обʼєкт
-        self.disallowed_message = "Вибачте, але вам не дозволено користуватись цим ботом." #:param disallowed_message: Повідомлення про відсутність доступу
+        # self.disallowed_message = "Вибачте, але вам не дозволено користуватись цим ботом." #:param disallowed_message: Повідомлення про відсутність доступу
 
 # HELP message
     async def help(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -36,10 +36,10 @@ class ChatGPT3TelegramBot:
 
 # PROMPT --React to incoming messages and respond accordingly.
     async def prompt(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        if not await self.is_allowed(update):
-           logging.warning(f'User {update.message.from_user.name} is not allowed to use the bot')
-           await self.send_disallowed_message(update, context)
-            return
+        # if not await self.is_allowed(update):
+        #    logging.warning(f'User {update.message.from_user.name} is not allowed to use the bot')
+        #    await self.send_disallowed_message(update, context)
+        #     return
 
         logging.info(f'New message received from user {update.message.from_user.name}')
         chat_id = update.effective_chat.id
@@ -53,27 +53,27 @@ class ChatGPT3TelegramBot:
             text=response
         )
 
-# MESSAGE -DISALLOWED
-    async def send_disallowed_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=self.disallowed_message,
-            disable_web_page_preview=True
-        )
-
-# ERRORS
-    async def error_handler(self, update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
-        logging.debug(f'Exception while handling an update: {context.error}')
-
-# ALLOWED USERS
-    async def is_allowed(self, update: Update) -> bool:
-        if self.config['allowed_user_ids'] == "*":
-            return True
-
-        allowed_user_ids = self.config['allowed_user_ids'].split(',')
-        if str(update.message.from_user.id) in allowed_user_ids:
-            return True
-        return False
+# # MESSAGE -DISALLOWED
+#     async def send_disallowed_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+#         await context.bot.send_message(
+#             chat_id=update.effective_chat.id,
+#             text=self.disallowed_message,
+#             disable_web_page_preview=True
+#         )
+#
+# # ERRORS
+#     async def error_handler(self, update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
+#         logging.debug(f'Exception while handling an update: {context.error}')
+#
+# # ALLOWED USERS
+#     async def is_allowed(self, update: Update) -> bool:
+#         if self.config['allowed_user_ids'] == "*":
+#             return True
+#
+#         allowed_user_ids = self.config['allowed_user_ids'].split(',')
+#         if str(update.message.from_user.id) in allowed_user_ids:
+#             return True
+#         return False
 
 # START BOT
     def run(self):
